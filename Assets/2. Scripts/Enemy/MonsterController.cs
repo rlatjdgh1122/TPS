@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using static UnityEditor.PlayerSettings;
 
 public enum State
@@ -31,6 +32,7 @@ public class MonsterController : MonoBehaviour
     public float attackDistance = 2f;
     public bool isDie = false;
 
+    public UnityEvent OnDamageCast;
 
     private void Awake()
     {
@@ -45,6 +47,12 @@ public class MonsterController : MonoBehaviour
         agent.destination = playerTr.position;
         StartCoroutine(checkMonsterState());
         StartCoroutine(MonsterAction());
+    }
+
+    public void OnAnimationHit()
+    {
+        Debug.Log("АјАн");
+        OnDamageCast?.Invoke();
     }
 
     private IEnumerator MonsterAction()
