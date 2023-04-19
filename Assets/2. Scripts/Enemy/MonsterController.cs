@@ -17,9 +17,9 @@ public enum State
 
 public class MonsterController : MonoBehaviour
 {
-
     private readonly int hashTrace = Animator.StringToHash("IsTrace"); //더 빠름
     private readonly int hashAttack = Animator.StringToHash("IsAttack");
+    private readonly int hashDie = Animator.StringToHash("Death");
 
     private Animator anim;
     private Transform playerTr;
@@ -30,6 +30,7 @@ public class MonsterController : MonoBehaviour
     [Header("스탯 설정")]
     public float traceDistance = 10f;
     public float attackDistance = 2f;
+
     public bool isDie = false;
 
     public UnityEvent OnDamageCast;
@@ -74,7 +75,11 @@ public class MonsterController : MonoBehaviour
                 case State.ATTACK:
                     anim.SetBool(hashAttack, true);
                     break;
-                case State DIE:
+                case State.DIE:
+                    anim.SetTrigger(hashDie);
+                    isDie = true;
+                    agent.isStopped = true;
+                    GetComponent<CapsuleCollider>().enabled = false;
                     break;
             }
             yield return new WaitForSeconds(.3f);
