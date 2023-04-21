@@ -15,7 +15,7 @@ public enum State
     DIE
 }
 
-public class MonsterController : MonoBehaviour
+public class MonsterController : PoolableMono
 {
     private readonly int hashTrace = Animator.StringToHash("IsTrace"); //´õ ºü¸§
     private readonly int hashAttack = Animator.StringToHash("IsAttack");
@@ -137,5 +137,10 @@ public class MonsterController : MonoBehaviour
             Vector3 dir = Quaternion.Euler(0, i, 0) * transform.forward;
             Gizmos.DrawRay(pos, dir * traceDistance);
         }
+    }
+
+    public override void Reset()
+    {
+        
     }
 }
