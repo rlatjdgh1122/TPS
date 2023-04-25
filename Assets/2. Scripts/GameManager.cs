@@ -1,24 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    public PoolListSO poolList;
+
+    public static GameManager Instance;
+
     [Header("Enemy Create Info")]
     public List<Transform> points = new();
-    public List<GameObject> monsterPool = new();
     public PoolableMono monster;
     public float createTime = 2.0f;
     public int maxMonster = 10;
 
     private void Awake()
     {
-        PoolManager.Instance = new PoolManager(this.transform);
-        PoolManager.Instance.CreatePool(monster, maxMonster);
+        if (Instance == null)
+            Instance = this;
+        else Destroy(this);
+
+        CreatePool();
     }
+
     private void Start()
     {
-
         Transform spawnPointGroup = GameObject.Find("SpawnPointGroup")?.transform;
         //SpawnPointGroup 자식들 모두 가져옴 
         foreach (Transform point in spawnPointGroup)
@@ -48,9 +56,18 @@ public class GameManager : MonoBehaviour
             HideCursor(true);
         }
     }
+    private void CreatePool()
+    {
+        PoolManager.Instance = new PoolManager(this.transform);
+
+        poolList.Pairs.ForEach(p => PoolManager.Instance.CreatePool(p.Prefab, p.Count));
+    }
     public void CreateMonster()
     {
-        PoolManager.Instance.Pop(monster.gameObject.name);
+        MonsterController pre = PoolManager.Instance.Pop("Monster") as MonsterController;
+        int idx = Random.Range(0, points.Count);
+        pre?.transform.SetPositionAndRotation(points[idx].position, points[idx].rotation);
+
     }
     /* public void CreateMonsterPool()
      {

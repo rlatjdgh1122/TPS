@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using static UnityEditor.PlayerSettings;
-
 public enum State
 {
     IDLE,
@@ -17,7 +15,9 @@ public enum State
 
 public class MonsterController : PoolableMono
 {
-    private readonly int hashTrace = Animator.StringToHash("IsTrace"); //더 빠름
+
+    //더 빠름
+    private readonly int hashTrace = Animator.StringToHash("IsTrace");
     private readonly int hashAttack = Animator.StringToHash("IsAttack");
     private readonly int hashDie = Animator.StringToHash("Death");
 
@@ -39,13 +39,19 @@ public class MonsterController : PoolableMono
     {
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+
+        playerTr = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+    private void OnDisable()
+    {
+        StopAllCoroutines();
     }
     void Start()
     {
-        playerTr = GameObject.FindGameObjectWithTag("Player").transform;
-
-
         agent.destination = playerTr.position;
+    }
+    private void OnEnable()
+    {
         StartCoroutine(checkMonsterState());
         StartCoroutine(MonsterAction());
     }
@@ -55,7 +61,6 @@ public class MonsterController : PoolableMono
         Debug.Log("공격");
         OnDamageCast?.Invoke();
     }
-
     private IEnumerator MonsterAction()
     {
         while (!isDie)
@@ -79,7 +84,8 @@ public class MonsterController : PoolableMono
                     anim.SetTrigger(hashDie);
                     isDie = true;
                     agent.isStopped = true;
-                    GetComponent<CapsuleCollider>().enabled = false;
+                    yield return new WaitForSeconds(1);
+                    PoolManager.Instance.Push(this);
                     break;
             }
             yield return new WaitForSeconds(.3f);
@@ -91,6 +97,7 @@ public class MonsterController : PoolableMono
         Vector3 blas = transform.forward;
         Vector3 pos = transform.position;
         pos.y += 1;
+
         for (int i = -60; i <= 60; i += 10)
         {
             Vector3 dir = Quaternion.Euler(0, i, 0) * blas;
@@ -114,10 +121,10 @@ public class MonsterController : PoolableMono
             if (state == State.DIE) yield break;
             float dis = (playerTr.position - transform.position).sqrMagnitude;
 
-            if (CheckPlayer() && dis <= attackDistance * attackDistance)
+            if (dis <= attackDistance * attackDistance)
                 state = State.ATTACK;
 
-            else if (CheckPlayer() && (dis <= traceDistance * traceDistance))
+            else if ((dis <= traceDistance * traceDistance))
             {
                 state = State.TRACE;
             }
@@ -141,6 +148,6 @@ public class MonsterController : PoolableMono
 
     public override void Reset()
     {
-        
+        //isDie = false;
     }
 }
