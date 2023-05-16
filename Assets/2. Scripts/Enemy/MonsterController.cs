@@ -52,6 +52,8 @@ public class MonsterController : PoolableMono
     }
     private void OnEnable()
     {
+        isDie = false;
+        state = State.IDLE;
         StartCoroutine(checkMonsterState());
         StartCoroutine(MonsterAction());
     }
@@ -148,6 +150,7 @@ public class MonsterController : PoolableMono
 
     public override void Reset()
     {
-        //isDie = false;
+        LivingEntity living = this.GetComponent<LivingEntity>();
+        living.initHealth = 100;
     }
 }

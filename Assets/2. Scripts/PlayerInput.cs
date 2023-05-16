@@ -10,13 +10,14 @@ public class PlayerInput : MonoBehaviour
     [SerializeField]
     private LayerMask whatIsGround;
 
-   // public event Action OnAttackKeyPress = null;
+    // public event Action OnAttackKeyPress = null;
     //public event Action<Vector3> OnMoveKeyPress = null;
 
     private Camera mainCam;
 
     public Vector2 moveDir { get; private set; }
     public float mouseX { get; private set; }
+    public float mouseY { get; private set; }
 
     public bool isJump { get; private set; }
     public bool reload { get; private set; }
@@ -28,6 +29,7 @@ public class PlayerInput : MonoBehaviour
     private void Awake()
     {
         mainCam = Camera.main;
+        mouseX = mouseY = 0;
     }
     // Start is called before the first frame update
 
@@ -38,7 +40,8 @@ public class PlayerInput : MonoBehaviour
         float y = Input.GetAxis("Vertical");
         moveDir = new Vector2(x, y);
 
-        mouseX = Input.GetAxis("Mouse X");
+        mouseX += Input.GetAxis("Mouse X");
+        mouseY += Input.GetAxis("Mouse Y");
 
         reload = Input.GetButtonDown("Reload");
         fire = Input.GetButtonDown("Fire1");
@@ -46,29 +49,11 @@ public class PlayerInput : MonoBehaviour
         Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         float depth = mainCam.farClipPlane;
-        if(Physics.Raycast(ray, out hit, depth))
+        if (Physics.Raycast(ray, out hit, depth))
         {
             mousePos = hit.point;
         }
     }
-    /*
-    private void UpdateAttackInput()
-    {
-        if (Input.GetMouseButton(0)) OnAttackKeyPress?.Invoke();
-     }
-    private void UpdateAimInput()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 hitPoint;
-            if (GetMouseWorldPosition(out hitPoint))
-            {
-                OnMoveKeyPress?.Invoke(hitPoint);
-            }
-        }
-    }*/
-
-
     public bool GetMouseWorldPosition(out Vector3 hitPoint)
     {
         Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
@@ -79,6 +64,4 @@ public class PlayerInput : MonoBehaviour
         hitPoint = result ? hit.point : Vector3.zero;
         return result;
     }
-
-
 }

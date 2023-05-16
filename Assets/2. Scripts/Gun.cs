@@ -18,7 +18,7 @@ public class Gun : MonoBehaviour
 
     private LineRenderer bulletLineRenderer;
     public float damage = 25;
-    private float fireDistance = 50f;
+    public float fireDistance = 50f;
     public int magCapacity = 10; //탄창용량
     public int magAmmo;  //현재 남은 탄알
     public float timeBetFire = 0.12f; //탄알 발사 간격
@@ -47,32 +47,26 @@ public class Gun : MonoBehaviour
         lastFireTime = 0f;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public bool Fire()
+    public bool Fire(Vector3 aim)
     {
         //발사 가능한 조건
         if (state == State.Ready && Time.time >= lastFireTime + timeBetFire)
         {
             lastFireTime = Time.time;
-            Shot();
+            Shot(aim);
             return true;
         }
         return false;
     }
 
-    private void Shot()
+    private void Shot(Vector3 fireDection)
     {
         //레이캐스트
         RaycastHit hit;
         Vector3 hitPosition = Vector3.zero;
 
         //쏘는 위치, 쏘는 방향, out hit
-        if (Physics.Raycast(firePosition.position, firePosition.forward, out hit, fireDistance))
+        if (Physics.Raycast(firePosition.position, fireDection, out hit, fireDistance))
         {
             var target = hit.collider.GetComponent<IDamageable>();
             //총알에 맞았고 해당 충돌체가 데미지를 입을 수 있다면 OnDamage를 통해 데미지 처리
@@ -89,11 +83,12 @@ public class Gun : MonoBehaviour
         }
         else
         {
-            hitPosition = firePosition.position + firePosition.forward * fireDistance;
+            hitPosition = firePosition.position + fireDection * fireDistance;
         }
 
         StartCoroutine(ShotEffect(hitPosition));
         magAmmo--;
+        UIManager.Instance.UpdateAmmoText(magAmmo);
         if (magAmmo <= 0)
         {
             state = State.Empty;
@@ -134,9 +129,7 @@ public class Gun : MonoBehaviour
 
         yield return new WaitForSeconds(reloadTime);
         magAmmo = magCapacity;
+        UIManager.Instance.UpdateAmmoText(magAmmo);
         state = State.Ready;
     }
-
-
-
 }

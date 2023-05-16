@@ -1,11 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+
+    public bool isGameOver = false;
+
+    private int score = 0;
     public PoolListSO poolList;
 
     public static GameManager Instance;
@@ -52,7 +57,6 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetMouseButton(1))
         {
-
             HideCursor(true);
         }
     }
@@ -102,4 +106,9 @@ public class GameManager : MonoBehaviour
          }
          return null;
      }*/
+    public void AddScore(int newScore)
+    {
+        score += newScore;
+        UIManager.Instance.UpdateScoreText(score);
+    }
 }

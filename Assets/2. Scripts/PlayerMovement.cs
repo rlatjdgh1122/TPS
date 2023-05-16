@@ -7,11 +7,12 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 3f, gravity = -9.8f;
 
     [HideInInspector] public Vector3 dir;
-    CharacterController characterController;
-    PlayerInput playerInput;
+
+    private CharacterController characterController;
+    private PlayerInput playerInput;
 
     private Animator animator;
-
+    private Transform followCam => transform.Find("FollowCamPos");
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     void LateUpdate()
     {
         PlayerMove();
-        //PlayerRotate();
+        PlayerRotate();
         UpdateAnimation(playerInput.moveDir);
     }
 
@@ -34,16 +35,19 @@ public class PlayerMovement : MonoBehaviour
         characterController.Move(dir * moveSpeed * Time.deltaTime);
     }
 
- 
+
     void PlayerRotate()
     {
-        Vector3 target = playerInput.mousePos;
-        Vector3 dir = target - transform.position;
-        dir.y = 0;
-        transform.rotation = Quaternion.LookRotation(dir.normalized);
-        
-    }
+        float mouseX = playerInput.mouseX;
+        float mouseY = playerInput.mouseY;
 
+        mouseY = Mathf.Clamp(mouseY,-60, 60);
+
+        var targeRotation = followCam.transform.eulerAngles.y;
+
+        transform.eulerAngles = new Vector3(0, mouseX, 0);
+        followCam.eulerAngles = new Vector3(-mouseY, mouseX, 0);
+    }
     private void UpdateAnimation(Vector2 moveInput)
     {
         animator.SetFloat("Vertical Move", moveInput.y);
