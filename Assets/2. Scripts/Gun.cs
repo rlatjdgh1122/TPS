@@ -53,7 +53,9 @@ public class Gun : MonoBehaviour
         if (state == State.Ready && Time.time >= lastFireTime + timeBetFire)
         {
             lastFireTime = Time.time;
-            Shot(aim);
+            var fireDirction = aim - firePosition.transform.position;
+
+            Shot(fireDirction);
             return true;
         }
         return false;

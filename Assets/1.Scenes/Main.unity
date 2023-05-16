@@ -322,6 +322,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 25fca75c4ac2ad0419db7fea4221013f, type: 2}
+    - target: {fileID: 9500000, guid: f3cd25b3bf53c4adaaf087d862e435e6, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: f3cd25b3bf53c4adaaf087d862e435e6, type: 3}
       propertyPath: m_CastShadows
       value: 0
@@ -2744,6 +2748,7 @@ MonoBehaviour:
   muzzleFlashEffect: {fileID: 19800004, guid: 40949a480f6b7d54f99564ee2b469dae, type: 3}
   bulletLineEffetTime: 0.03
   damage: 25
+  fireDistance: 50
   magCapacity: 10
   magAmmo: 0
   timeBetFire: 0.12

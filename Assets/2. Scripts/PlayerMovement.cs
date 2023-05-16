@@ -43,10 +43,10 @@ public class PlayerMovement : MonoBehaviour
 
         mouseY = Mathf.Clamp(mouseY,-60, 60);
 
-        var targeRotation = followCam.transform.eulerAngles.y;
+        var targetRotation = followCam.transform.eulerAngles.y;
+        transform.eulerAngles = Vector3.up * targetRotation;
 
-        transform.eulerAngles = new Vector3(0, mouseX, 0);
-        followCam.eulerAngles = new Vector3(-mouseY, mouseX, 0);
+        followCam.transform.eulerAngles = new Vector3(0, mouseX, 0);
     }
     private void UpdateAnimation(Vector2 moveInput)
     {
